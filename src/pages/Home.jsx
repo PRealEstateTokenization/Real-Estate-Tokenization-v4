@@ -1,15 +1,44 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building, Building2, House, LayoutGrid, Search, Store, Warehouse } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Building, Building2, Check, House, LayoutGrid, MapPin, Search, Store, Warehouse, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import PropertyCard, { PropertyCardSkeleton } from '@/components/PropertyCard'
 import { useWallet } from '@/context/WalletContext'
 import { loadCatalog } from '@/lib/data'
 import { prettyErr } from '@/lib/chain'
+import { placeholderImg } from '@/lib/placeholder'
+import { rupee, rupeeShort } from '@/lib/format'
 import { PROPERTY_TYPES } from '@/config'
 import { cn } from '@/lib/utils'
 
 const ICONS = { 'Commercial office': Building2, Retail: Store, Warehousing: Warehouse, Residential: House, 'Mixed use': Building }
 const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
+
+function UnitTicket({ p }) {
+  const share = p.supply > 0n ? (100 / Number(p.supply)).toFixed(2) : '0'
+  return (
+    <div className="relative w-72 rounded-2xl bg-white shadow-[0_24px_60px_-20px_rgba(29,42,60,.45)]">
+      <div className="p-5 pb-4">
+        <p className="text-xs font-semibold text-brick">1 unit of</p>
+        <p className="mt-0.5 truncate font-serif text-xl font-semibold">{p.name}</p>
+        <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground"><MapPin className="size-3.5" />{p.location || 'India'}</p>
+      </div>
+      <div className="relative border-t border-dashed">
+        <span className="absolute -top-3 -left-3 size-6 rounded-full bg-[#1d2a3c]/0 shadow-[inset_0_0_0_100px_var(--background)]" />
+        <span className="absolute -top-3 -right-3 size-6 rounded-full shadow-[inset_0_0_0_100px_var(--background)]" />
+      </div>
+      <dl className="grid grid-cols-2 gap-y-3 p-5 pt-4 text-sm">
+        <div><dt className="text-muted-foreground">You pay</dt><dd className="text-lg font-bold">{p.minPrice !== null ? rupee(p.minPrice) : '—'}</dd></div>
+        <div><dt className="text-muted-foreground">You earn</dt><dd className="text-lg font-bold">{share}% <span className="text-sm font-medium text-muted-foreground">of rent</span></dd></div>
+        <div className="col-span-2 flex items-center justify-between rounded-lg bg-muted px-3 py-2 text-xs">
+          <span className="text-muted-foreground">Rent paid to holders so far</span><b className="text-positive">{rupeeShort(p.rentPaid)}</b>
+        </div>
+      </dl>
+    </div>
+  )
+}
 
 export default function Home() {
   const { version } = useWallet()
@@ -21,75 +50,173 @@ export default function Home() {
 
   useEffect(() => { loadCatalog().then((c) => setItems(c.items)).catch((e) => setErr(prettyErr(e))) }, [version])
 
+  const all = items || []
+  const hero = all.find((p) => p.image && p.rentPaid > 0n) || all.find((p) => p.image) || all[0]
+  const totals = {
+    count: all.length,
+    forSale: all.reduce((a, p) => a + p.forSale, 0n),
+    rent: all.reduce((a, p) => a + p.rentPaid, 0n),
+    min: all.filter((p) => p.minPrice !== null).reduce((a, p) => (a === null || p.minPrice < a ? p.minPrice : a), null),
+  }
+
   const shown = useMemo(() => {
-    let list = (items || []).filter((p) => (type === 'All' || p.type === type) &&
+    let list = all.filter((p) => (type === 'All' || p.type === type) &&
       (!q || `${p.name} ${p.location} ${p.type}`.toLowerCase().includes(q.toLowerCase())))
     if (sort === 'price') list = [...list].sort((a, b) => (a.minPrice === null) - (b.minPrice === null) || (a.minPrice !== null && b.minPrice !== null ? cmp(a.minPrice, b.minPrice) : 0))
     if (sort === 'avail') list = [...list].sort((a, b) => cmp(b.forSale, a.forSale))
     return list
   }, [items, q, type, sort])
 
+  const goList = (e) => { e?.preventDefault(); document.getElementById('listings')?.scrollIntoView({ behavior: 'smooth' }) }
   const cats = [['All', LayoutGrid], ...PROPERTY_TYPES.map((t) => [t, ICONS[t] || Building])]
 
   return (
     <>
-      <section className="border-b">
-        <div className="mx-auto max-w-7xl px-4 pt-12 pb-8 text-center sm:px-6 sm:pt-16">
-          <h1 className="text-4xl font-extrabold tracking-[-0.035em] sm:text-6xl">Real estate for every Indian.</h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">Own units in rent-earning buildings, collect your share of the rent, and sell when you like.</p>
-          <form onSubmit={(e) => e.preventDefault()} className="mx-auto mt-8 flex max-w-2xl items-center rounded-full border bg-white p-2 pl-6 shadow-[0_6px_20px_-8px_rgba(20,35,31,.25)]">
-            <div className="min-w-0 flex-1 text-left">
-              <label htmlFor="q" className="block text-xs font-semibold">Where</label>
-              <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by city, area or building"
-                className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
-            </div>
-            <div className="mx-4 hidden h-8 border-l sm:block" />
-            <div className="hidden text-left sm:block">
-              <label htmlFor="sort" className="block text-xs font-semibold">Sort</label>
-              <select id="sort" value={sort} onChange={(e) => setSort(e.target.value)} className="bg-transparent pr-2 text-[15px] text-muted-foreground outline-none">
-                <option value="new">Newest</option><option value="price">Lowest price</option><option value="avail">Most for sale</option>
-              </select>
-            </div>
-            <button type="submit" aria-label="Search" className="ml-2 grid size-12 shrink-0 place-items-center rounded-full bg-primary text-white hover:bg-primary/90"><Search className="size-5" /></button>
-          </form>
+      {/* hero */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-40 -right-40 size-[620px] rounded-full bg-[radial-gradient(circle,#f1d9c9_0%,transparent_65%)]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-12 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pt-20 lg:pb-24">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full bg-brick-soft px-3 py-1 text-sm font-semibold text-brick">
+              <span className="size-1.5 rounded-full bg-brick" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
+            </p>
+            <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">Real estate for every Indian.</h1>
+            <p className="mt-6 max-w-lg text-lg text-muted-foreground">
+              Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
+            </p>
+            <form onSubmit={goList} className="mt-8 flex max-w-xl items-center rounded-full border bg-white p-2 pl-6 shadow-[0_10px_30px_-12px_rgba(29,42,60,.3)]">
+              <div className="min-w-0 flex-1">
+                <label htmlFor="q" className="block text-xs font-semibold">Where</label>
+                <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="City, area or building"
+                  className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
+              </div>
+              <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-primary px-5 font-semibold text-white hover:bg-forest-deep"><Search className="size-4.5" />Search</button>
+            </form>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-lg lg:mr-0">
+            {!items ? <Skeleton className="aspect-[4/5] rounded-[2rem]" /> : (
+              <>
+                <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
+                  <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/5] overflow-hidden rounded-[2rem] bg-moss">
+                    <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
+                  </Link>
+                </motion.div>
+                {hero && (
+                  <motion.div initial={{ opacity: 0, y: 24, rotate: -4 }} animate={{ opacity: 1, y: 0, rotate: -3 }} transition={{ delay: 0.35, duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+                    className="absolute -bottom-8 -left-4 sm:-left-12">
+                    <UnitTicket p={hero} />
+                  </motion.div>
+                )}
+              </>
+            )}
+          </div>
         </div>
-        <div className="mx-auto flex max-w-7xl justify-start gap-8 overflow-x-auto px-4 sm:justify-center sm:px-6">
-          {cats.map(([t, Icon]) => (
-            <button key={t} type="button" onClick={() => setType(t)}
-              className={cn('flex shrink-0 flex-col items-center gap-1.5 border-b-2 pt-2 pb-3 text-xs font-semibold transition-colors',
-                type === t ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground')}>
-              <Icon className="size-6" strokeWidth={1.6} />{t}
-            </button>
+      </section>
+
+      {/* live numbers */}
+      <section className="bg-primary text-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 px-4 py-10 sm:px-6 md:grid-cols-4">
+          {[
+            [totals.count, 'buildings listed'],
+            [totals.forSale.toString(), 'units for sale now'],
+            [rupeeShort(totals.rent), 'rent paid to holders'],
+            [totals.min !== null ? rupeeShort(totals.min) : '—', 'smallest ticket today'],
+          ].map(([v, k]) => (
+            <div key={k}>
+              <p className="font-serif text-4xl font-semibold">{items ? v : '–'}</p>
+              <p className="mt-1 text-sm text-white/60">{k}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      {/* listings */}
+      <section id="listings" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 sm:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-4xl">Open for investment</h2>
+            <p className="mt-2 text-muted-foreground">Every listing shows photos, documents, the location and how it has performed.</p>
+          </div>
+          <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort"
+            className="rounded-full border bg-white px-4 py-2 text-sm font-medium outline-none">
+            <option value="new">Newest first</option><option value="price">Lowest price</option><option value="avail">Most units for sale</option>
+          </select>
+        </div>
+        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+          {cats.map(([t, Icon]) => (
+            <button key={t} type="button" onClick={() => setType(t)}
+              className={cn('flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
+                type === t ? 'border-primary bg-primary text-white' : 'bg-white hover:border-primary/40')}>
+              <Icon className="size-4" strokeWidth={1.8} />{t}
+            </button>
+          ))}
+        </div>
         {err ? <p className="py-20 text-center text-destructive">{err}</p> : (
-          <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {!items ? [0, 1, 2, 3].map((k) => <PropertyCardSkeleton key={k} />)
               : shown.length ? shown.map((p) => <PropertyCard key={p.address} p={p} />)
-              : <div className="col-span-full py-16 text-center">
-                  <p className="text-lg font-semibold">{items.length ? 'No properties match' : 'No properties yet'}</p>
-                  <p className="mt-1 text-muted-foreground">{items.length ? 'Try another area or category.' : <Link to="/list" className="font-semibold text-primary underline">List the first one</Link>}</p>
+              : <div className="col-span-full rounded-3xl border border-dashed py-16 text-center">
+                  <p className="text-lg font-semibold">{all.length ? 'No buildings match that search' : 'No buildings listed yet'}</p>
+                  <p className="mt-1 text-muted-foreground">{all.length ? 'Try another area or category.' : <Link to="/list" className="font-semibold text-brick underline">List the first one</Link>}</p>
                 </div>}
           </div>
         )}
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="grid gap-10 border-t py-14 md:grid-cols-3">
+      {/* why units */}
+      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6">
+        <h2 className="max-w-2xl text-4xl">Rent income without buying the whole building</h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          <div className="rounded-3xl border bg-white/60 p-7">
+            <p className="font-semibold text-muted-foreground">Buying property yourself</p>
+            <ul className="mt-5 space-y-4">
+              {['Crores to get started, usually with a loan', 'You find tenants, collect rent and fix things', 'Selling takes months and a buyer for the whole thing', 'Paperwork lives in folders and offices'].map((t) => (
+                <li key={t} className="flex gap-3 text-muted-foreground"><X className="mt-0.5 size-5 shrink-0" />{t}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-3xl bg-white p-7 ring-2 ring-brick/70">
+            <p className="font-semibold text-brick">Owning units on Parcel.io</p>
+            <ul className="mt-5 space-y-4">
+              {[`Start from ${totals.min !== null ? rupee(totals.min) : 'one unit'}, in rupees`, 'The building is managed for you; rent is split by units', 'List your units for sale whenever you like', 'Every unit you hold is recorded on a public ledger'].map((t) => (
+                <li key={t} className="flex gap-3"><Check className="mt-0.5 size-5 shrink-0 text-brick" />{t}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* how it works */}
+      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6">
+        <h2 className="text-4xl">How it works</h2>
+        <ol className="relative mt-10 grid gap-10 md:grid-cols-3">
+          <span className="absolute top-5 right-[16%] left-[4%] hidden h-px bg-brick/40 md:block" />
           {[
-            ['Choose a building', 'Every listing shows photos, documents, the location and how it has done against the market.'],
-            ['Buy units', 'Pay the seller in rupees. The units are recorded in your own wallet straight away.'],
-            ['Earn the rent', 'Rent is split across all units. Claim your share from your portfolio, and sell whenever you like.'],
+            ['Choose a building', 'Look through photos, documents, the location and its performance against NIFTY and SENSEX.'],
+            ['Buy units', 'Pick how many units you want and pay the seller in rupees. The units land in your own wallet.'],
+            ['Earn the rent', 'Rent is split across all units. Claim your share from your portfolio and sell whenever you like.'],
           ].map(([t, d], i) => (
-            <div key={t}>
-              <p className="text-sm font-semibold text-muted-foreground">Step {i + 1}</p>
-              <p className="mt-1 text-xl font-bold">{t}</p>
-              <p className="mt-2 text-muted-foreground">{d}</p>
-            </div>
+            <li key={t} className="relative">
+              <span className="relative grid size-10 place-items-center rounded-full bg-brick font-serif text-lg font-semibold text-white ring-8 ring-background">{i + 1}</span>
+              <p className="mt-5 text-xl font-bold">{t}</p>
+              <p className="mt-2 max-w-sm text-muted-foreground">{d}</p>
+            </li>
           ))}
+        </ol>
+      </section>
+
+      {/* owners */}
+      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] bg-primary px-8 py-12 text-white sm:px-12">
+          <div className="pointer-events-none absolute -right-24 -bottom-32 size-96 rounded-full bg-[radial-gradient(circle,#b8643c88_0%,transparent_65%)]" />
+          <div className="relative flex flex-wrap items-center justify-between gap-8">
+            <div className="max-w-xl">
+              <h2 className="text-4xl">Own a rent-earning building?</h2>
+              <p className="mt-3 text-white/70">List it in a few steps, split it into units, and let investors buy in. You keep running the building; they share the rent.</p>
+            </div>
+            <Button size="lg" variant="brick" asChild><Link to="/list">List your property <ArrowRight /></Link></Button>
+          </div>
         </div>
       </section>
     </>
