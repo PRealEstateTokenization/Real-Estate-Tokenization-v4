@@ -179,7 +179,7 @@ export default function Home() {
           <div className="rounded-3xl bg-white p-7 ring-2 ring-brick/70">
             <p className="font-semibold text-brick">Owning units on Parcel.io</p>
             <ul className="mt-5 space-y-4">
-              {[`Start from ${totals.min !== null ? rupee(totals.min) : 'one unit'}, in rupees`, 'The building is managed for you; rent is split by units', 'List your units for sale whenever you like', 'Every unit you hold is recorded on a public ledger'].map((t) => (
+              {[`Start from ${totals.min !== null ? rupee(totals.min) : 'one unit'}`, 'The building is managed for you; rent is split by units', 'List your units for sale whenever you like', 'Every unit you hold is recorded on a public ledger'].map((t) => (
                 <li key={t} className="flex gap-3"><Check className="mt-0.5 size-5 shrink-0 text-brick" />{t}</li>
               ))}
             </ul>
