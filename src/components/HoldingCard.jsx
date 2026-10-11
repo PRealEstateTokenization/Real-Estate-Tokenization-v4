@@ -25,7 +25,7 @@ export default function HoldingCard({ p }) {
           {value !== null && p.myBalance > 0n && <Row k="Value at lowest offer" v={rupee(value)} />}
           <Row k="Rent ready to claim" v={<span className={p.myPending > 0n ? 'text-positive' : ''}>{rupee(p.myPending)}</span>} />
         </dl>
-        {p.myPending > 0n && <Button className="w-full" disabled={busy} onClick={claim}>{busy ? 'Waiting for confirmation…' : `Claim ${rupee(p.myPending)}`}</Button>}
+        {p.myPending > 0n && <Button variant="brick" className="w-full" disabled={busy} onClick={claim}>{busy ? 'Waiting for confirmation…' : `Claim ${rupee(p.myPending)}`}</Button>}
       </CardContent>
     </Card>
   )

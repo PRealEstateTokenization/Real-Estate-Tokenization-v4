@@ -72,7 +72,7 @@ export default function Portfolio() {
       <div className="mt-8 flex gap-7 border-b">
         {[['holdings', `Holdings${data ? ` (${h.length})` : ''}`], ['offers', `Selling${data ? ` (${offers.length})` : ''}`]].map(([v, l]) => (
           <button key={v} type="button" onClick={() => setTab(v)}
-            className={cn('-mb-px border-b-2 py-3 text-[15px] font-semibold', tab === v ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')}>{l}</button>
+            className={cn('-mb-px border-b-2 py-3 text-[15px] font-semibold', tab === v ? 'border-brick text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')}>{l}</button>
         ))}
       </div>
 
@@ -91,7 +91,7 @@ export default function Portfolio() {
                 <div className="flex w-full items-center justify-between gap-6 sm:w-auto">
                   <div className="sm:w-28 sm:text-right"><p className="font-semibold">{x.value !== null ? rupeeShort(x.value) : '—'}</p><p className="text-xs text-muted-foreground">Value</p></div>
                   <div className="sm:w-28 sm:text-right"><p className={cn('font-semibold', x.pending > 0n && 'text-positive')}>{rupee(x.pending)}</p><p className="text-xs text-muted-foreground">Rent to claim</p></div>
-                  <Button size="sm" variant={x.pending > 0n ? 'default' : 'outline'} className="w-28" disabled={x.pending === 0n || busy === x.address} onClick={() => claim(x)}>
+                  <Button size="sm" variant={x.pending > 0n ? 'brick' : 'outline'} className="w-28" disabled={x.pending === 0n || busy === x.address} onClick={() => claim(x)}>
                     {x.pending > 0n ? 'Claim' : 'Nothing due'}
                   </Button>
                 </div>

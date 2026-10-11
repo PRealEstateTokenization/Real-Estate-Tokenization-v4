@@ -3,41 +3,44 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Parcel.io tokens: original cream palette (warm cream, green-black, warm tan accent) */
+/* Parcel.io tokens: warm cream page, navy ink, copper accent, serif headings */
 :root {
-  --radius: 0.75rem;
-  --background: #fbf9f5;
-  --foreground: #1a2e29;
+  --radius: 0.875rem;
+  --background: #f7f4ee;
+  --foreground: #1d2a3c;
   --card: #ffffff;
-  --card-foreground: #1a2e29;
+  --card-foreground: #1d2a3c;
   --popover: #ffffff;
-  --popover-foreground: #1a2e29;
-  --primary: #1a2e29;
+  --popover-foreground: #1d2a3c;
+  --primary: #1d2a3c;
   --primary-foreground: #ffffff;
-  --secondary: #f4efe7;
-  --secondary-foreground: #1a2e29;
-  --muted: #f4efe7;
-  --muted-foreground: #8a8578;
-  --accent: #f4efe7;
-  --accent-foreground: #1a2e29;
+  --secondary: #f3eee5;
+  --secondary-foreground: #1d2a3c;
+  --muted: #f3eee5;
+  --muted-foreground: #7a8291;
+  --accent: #f3eee5;
+  --accent-foreground: #1d2a3c;
   --destructive: #b3261e;
-  --border: #e4dccf;
-  --input: #ded5c6;
-  --ring: #c7aa7e;
-  --brick: #b8874e;
-  --brick-soft: #f4e9d8;
-  --moss: #efe6d8;
-  --forest-deep: #1a2e29;
-  --positive: #3f7a5c;
-  --chart-1: #1a2e29;
-  --chart-2: #b8874e;
-  --chart-3: #5c7267;
+  --border: #e8e1d6;
+  --input: #ddd5c8;
+  --ring: #b8643c;
+  --brick: #b8643c;
+  --brick-soft: #f6e6dc;
+  --moss: #efe9df;
+  --forest-deep: #121c2a;
+  --positive: #2f7a55;
+  --link: #2f5d8a;
+  --chart-1: #1d2a3c;
+  --chart-2: #b8643c;
+  --chart-3: #9aa1ab;
   --chart-4: #d9a441;
   --chart-5: #5b8a9a;
 }
 
 @theme inline {
-  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --color-link: var(--link);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -80,11 +83,14 @@
     @apply bg-background text-foreground antialiased;
     font-variant-numeric: tabular-nums lining-nums;
   }
-  h1, h2, h3 { letter-spacing: -0.02em; }
+  h1, h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.02em; font-optical-sizing: auto; }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; }
 }
+
+/* copper buttons, as on the original site */
+.bg-brick.text-white { background-image: linear-gradient(180deg, #d5865b, #bc6840); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

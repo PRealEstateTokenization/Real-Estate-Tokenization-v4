@@ -29,7 +29,7 @@ function AccountMenu() {
     <div className="relative" ref={ref}>
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu"
         className="flex items-center gap-2 rounded-full border py-1 pr-2.5 pl-1 transition-shadow hover:shadow-md">
-        <span className="grid size-8 place-items-center rounded-full bg-primary text-xs font-bold text-white">{initials(session.name)}</span>
+        <span className="grid size-8 place-items-center rounded-full bg-gradient-to-b from-[#d5865b] to-[#bc6840] text-xs font-bold text-white">{initials(session.name)}</span>
         <span className="hidden text-sm font-semibold sm:block">{session.name}</span>
         <ChevronDown className="size-4 text-muted-foreground" />
       </button>
@@ -56,13 +56,13 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
-          <Logo /><span>Parcel<span className="text-brick">.io</span></span>
+          <Logo /><span className="font-serif text-2xl font-semibold">Parcel<span className="text-brick">.io</span></span>
         </Link>
         <nav className="hidden h-full items-stretch gap-6 md:flex">
           {tabs.map((t) => (
             <NavLink key={t.to} to={t.to} end={t.end}
               className={({ isActive }) => cn('flex items-center border-b-2 text-[15px] font-semibold transition-colors',
-                isActive ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+                isActive ? 'border-brick text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground')}>
               {t.label}
             </NavLink>
           ))}
