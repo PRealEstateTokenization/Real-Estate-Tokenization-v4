@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Parcel.io tokens — forest green actions, brick accent, cool neutrals */
+:root {
+  --radius: 0.75rem;
+  --background: #ffffff;
+  --foreground: #14231f;
+  --card: #ffffff;
+  --card-foreground: #14231f;
+  --popover: #ffffff;
+  --popover-foreground: #14231f;
+  --primary: #1e4a3d;
+  --primary-foreground: #ffffff;
+  --secondary: #eef4f0;
+  --secondary-foreground: #14231f;
+  --muted: #f4f5f2;
+  --muted-foreground: #66726d;
+  --accent: #eef4f0;
+  --accent-foreground: #14231f;
+  --destructive: #b3261e;
+  --border: #e3e6e1;
+  --input: #d2d7d1;
+  --ring: #1e4a3d;
+  --brick: #b5562f;
+  --brick-soft: #f6e7df;
+  --moss: #dde8e1;
+  --forest-deep: #12302a;
+  --positive: #1e7a4f;
+  --chart-1: #1e4a3d;
+  --chart-2: #b5562f;
+  --chart-3: #8c9a94;
+  --chart-4: #d9a441;
+  --chart-5: #5b8a9a;
+}
+
+@theme inline {
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brick: var(--brick);
+  --color-brick-soft: var(--brick-soft);
+  --color-moss: var(--moss);
+  --color-forest-deep: var(--forest-deep);
+  --color-positive: var(--positive);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  h1, h2, h3 { letter-spacing: -0.02em; }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
