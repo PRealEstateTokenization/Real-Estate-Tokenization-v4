@@ -23,7 +23,7 @@ function UnitTicket({ p }) {
       <div className="p-5 pb-4">
         <p className="text-xs font-semibold text-brick">1 unit of</p>
         <p className="mt-0.5 truncate font-serif text-xl font-semibold">{p.name}</p>
-        <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground"><MapPin className="size-3.5" />{p.location || 'India'}</p>
+        <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground"><MapPin className="size-3.5" />{p.location || 'Location to be added'}</p>
       </div>
       <div className="relative border-t border-dashed">
         <span className="absolute -top-3 -left-3 size-6 rounded-full bg-[#1d2a3c]" />
@@ -72,62 +72,63 @@ export default function Home() {
 
   return (
     <>
-      {/* hero */}
-      <section className="navy-glow relative overflow-hidden">
-        <div className="pointer-events-none absolute top-1/3 -right-40 size-[640px] rounded-full bg-[radial-gradient(circle,rgba(184,100,60,.35)_0%,transparent_65%)]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pt-20 lg:pb-24">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-[#f0b08c]">
-              <span className="size-1.5 rounded-full bg-[#f0b08c]" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
-            </p>
-            <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">Real estate for every Indian.</h1>
-            <p className="mt-6 max-w-lg text-lg text-white/70">
-              Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
-            </p>
-            <form onSubmit={goList} className="mt-8 flex max-w-xl items-center rounded-full bg-white p-2 pl-6 text-foreground shadow-[0_18px_40px_-12px_rgba(0,0,0,.45)]">
-              <div className="min-w-0 flex-1">
-                <label htmlFor="q" className="block text-xs font-semibold">Where</label>
-                <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="City, area or building"
-                  className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
-              </div>
-              <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-[#d5865b] to-[#bc6840] px-5 font-semibold text-white hover:brightness-105"><Search className="size-4.5" />Search</button>
-            </form>
+      {/* hero: one rounded navy panel, like the closing banners */}
+      <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
+        <div className="relative rounded-[2rem] bg-primary text-white">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]">
+            <div className="absolute -top-40 left-1/2 size-[640px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(184,100,60,.32)_0%,transparent_65%)]" />
           </div>
-
-          <div className="relative mx-auto w-full max-w-lg lg:mr-0">
-            {!items ? <Skeleton className="aspect-[4/5] rounded-[2rem] bg-white/10" /> : (
-              <>
-                <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
-                  <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/5] overflow-hidden rounded-[2rem] bg-white/10 ring-1 ring-white/10">
-                    <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
-                  </Link>
-                </motion.div>
-                {hero && (
-                  <motion.div initial={{ opacity: 0, y: 24, rotate: -4 }} animate={{ opacity: 1, y: 0, rotate: -3 }} transition={{ delay: 0.35, duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
-                    className="absolute -bottom-8 -left-4 sm:-left-12">
-                    <UnitTicket p={hero} />
-                  </motion.div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* live numbers */}
-      <section className="bg-primary text-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 border-t border-white/10 px-4 py-10 sm:px-6 md:grid-cols-4">
-          {[
-            [totals.count, 'buildings listed'],
-            [totals.forSale.toString(), 'units for sale now'],
-            [rupeeShort(totals.rent), 'rent paid to holders'],
-            [totals.min !== null ? rupeeShort(totals.min) : '—', 'smallest ticket today'],
-          ].map(([v, k]) => (
-            <div key={k}>
-              <p className="font-serif text-4xl font-semibold">{items ? v : '–'}</p>
-              <p className="mt-1 text-sm text-white/60">{k}</p>
+          <div className="relative grid items-center gap-14 px-6 pt-12 pb-14 sm:px-12 lg:grid-cols-2 lg:gap-16 lg:py-16">
+            <div className="text-center lg:text-left">
+              <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-[#f0b08c]">
+                <span className="size-1.5 rounded-full bg-[#f0b08c]" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
+              </p>
+              <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl xl:text-7xl">Real estate for every Indian.</h1>
+              <p className="mx-auto mt-6 max-w-lg text-lg text-white/70 lg:mx-0">
+                Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
+              </p>
+              <form onSubmit={goList} className="mx-auto mt-8 flex max-w-lg items-center rounded-full bg-white p-2 pl-6 text-left text-foreground shadow-[0_18px_40px_-12px_rgba(0,0,0,.45)] lg:mx-0">
+                <div className="min-w-0 flex-1">
+                  <label htmlFor="q" className="block text-xs font-semibold">Where</label>
+                  <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="City, area or building"
+                    className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
+                </div>
+                <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-[#d5865b] to-[#bc6840] px-5 font-semibold text-white hover:brightness-105"><Search className="size-4.5" />Search</button>
+              </form>
             </div>
-          ))}
+
+            <div className="relative mx-auto w-full max-w-md pb-6">
+              {!items ? <Skeleton className="aspect-[5/6] rounded-3xl bg-white/10" /> : (
+                <>
+                  <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
+                    <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[5/6] overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/10">
+                      <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
+                    </Link>
+                  </motion.div>
+                  {hero && (
+                    <motion.div initial={{ opacity: 0, y: 24, rotate: -4 }} animate={{ opacity: 1, y: 0, rotate: -3 }} transition={{ delay: 0.35, duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+                      className="absolute bottom-0 -left-3 sm:-left-14">
+                      <UnitTicket p={hero} />
+                    </motion.div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="relative grid grid-cols-2 gap-y-6 border-t border-white/10 px-6 py-8 sm:px-12 md:grid-cols-4">
+            {[
+              [totals.count, 'buildings listed'],
+              [totals.forSale.toString(), 'units for sale now'],
+              [rupeeShort(totals.rent), 'rent paid to holders'],
+              [totals.min !== null ? rupeeShort(totals.min) : '—', 'smallest ticket today'],
+            ].map(([v, k]) => (
+              <div key={k} className="text-center md:text-left">
+                <p className="font-serif text-3xl font-semibold sm:text-4xl">{items ? v : '–'}</p>
+                <p className="mt-1 text-sm text-white/60">{k}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -179,7 +180,7 @@ export default function Home() {
           <div className="rounded-3xl bg-white p-7 ring-2 ring-brick/70">
             <p className="font-semibold text-brick">Owning units on Parcel.io</p>
             <ul className="mt-5 space-y-4">
-              {[`Start from ${totals.min !== null ? rupee(totals.min) : 'one unit'}`, 'The building is managed for you; rent is split by units', 'List your units for sale whenever you like', 'Every unit you hold is recorded on a public ledger'].map((t) => (
+              {[`Start from ${totals.min !== null ? rupee(totals.min) : 'one unit'}, in rupees`, 'The building is managed for you; rent is split by units', 'List your units for sale whenever you like', 'Every unit you hold is recorded on a public ledger'].map((t) => (
                 <li key={t} className="flex gap-3"><Check className="mt-0.5 size-5 shrink-0 text-brick" />{t}</li>
               ))}
             </ul>
