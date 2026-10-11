@@ -14,18 +14,17 @@ export default function About() {
   return (
     <div className="pb-8">
       {/* intro */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -top-40 -left-32 size-[560px] rounded-full bg-[radial-gradient(circle,#f1d9c9_0%,transparent_65%)]" />
+      <section className="navy-glow relative overflow-hidden pb-20 lg:pb-28">
         <div className="relative mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:pt-24">
-          <p className="font-semibold text-brick">About Parcel.io</p>
+          <p className="font-semibold text-[#f0b08c]">About Parcel.io</p>
           <h1 className="mt-3 max-w-4xl text-5xl leading-[1.03] sm:text-6xl lg:text-7xl">Real estate for every Indian.</h1>
-          <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+          <p className="mt-8 max-w-2xl text-xl leading-relaxed text-white/70">
             Rent-earning buildings have long been one of the most dependable investments in India, and one of the hardest to get into.
             Parcel.io splits a building into units that anyone can buy, so you can earn a share of its rent without buying the whole thing.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Button size="lg" asChild><Link to="/">Explore properties <ArrowRight /></Link></Button>
-            <Button size="lg" variant="outline" asChild><a href="#how">How it works</a></Button>
+            <Button size="lg" variant="brick" asChild><Link to="/">Explore properties <ArrowRight /></Link></Button>
+            <Button size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white" asChild><a href="#how">How it works</a></Button>
           </div>
         </div>
       </section>
@@ -64,7 +63,7 @@ export default function About() {
               You never need to buy or hold cryptocurrency.
             </p>
           </div>
-          <div className="rounded-3xl bg-primary p-8 text-white">
+          <div className="navy-glow rounded-3xl p-8">
             <p className="font-serif text-2xl font-semibold">An example</p>
             <dl className="mt-6 divide-y divide-white/10">
               {[
@@ -216,8 +215,7 @@ export default function About() {
 
       {/* cta */}
       <section className="mx-auto max-w-6xl px-4 pt-24 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] bg-primary px-8 py-14 text-center text-white">
-          <div className="pointer-events-none absolute -top-32 left-1/2 size-96 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,#b8643c66_0%,transparent_65%)]" />
+        <div className="navy-glow relative overflow-hidden rounded-[2rem] px-8 py-14 text-center">
           <h2 className="relative text-4xl sm:text-5xl">Start with one unit.</h2>
           <p className="relative mx-auto mt-3 max-w-lg text-white/70">Browse rent-earning buildings, see how they have done, and buy as many units as suits you.</p>
           <div className="relative mt-8 flex flex-wrap justify-center gap-3">

@@ -16,18 +16,18 @@ export default function HoldingCard({ p }) {
     catch {} finally { setBusy(false) }
   }
   return (
-    <Card className="gap-0 py-5">
+    <Card className="navy-glow gap-0 border-0 py-5">
       <CardContent className="space-y-3">
         <p className="font-bold">Your holding</p>
-        <dl className="divide-y text-sm">
+        <dl className="divide-y divide-white/10 text-sm">
           <Row k="Units" v={p.myBalance.toString()} />
           <Row k="Share of property" v={pct(p.myBalance, p.supply)} />
           {value !== null && p.myBalance > 0n && <Row k="Value at lowest offer" v={rupee(value)} />}
-          <Row k="Rent ready to claim" v={<span className={p.myPending > 0n ? 'text-positive' : ''}>{rupee(p.myPending)}</span>} />
+          <Row k="Rent ready to claim" v={<span className={p.myPending > 0n ? 'text-[#8fd4ad]' : ''}>{rupee(p.myPending)}</span>} />
         </dl>
         {p.myPending > 0n && <Button variant="brick" className="w-full" disabled={busy} onClick={claim}>{busy ? 'Waiting for confirmation…' : `Claim ${rupee(p.myPending)}`}</Button>}
       </CardContent>
     </Card>
   )
 }
-const Row = ({ k, v }) => <div className="flex justify-between py-2"><dt className="text-muted-foreground">{k}</dt><dd className="font-semibold">{v}</dd></div>
+const Row = ({ k, v }) => <div className="flex justify-between py-2"><dt className="text-white/60">{k}</dt><dd className="font-semibold">{v}</dd></div>

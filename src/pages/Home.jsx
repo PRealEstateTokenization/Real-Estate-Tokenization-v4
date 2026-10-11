@@ -19,15 +19,15 @@ const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 function UnitTicket({ p }) {
   const share = p.supply > 0n ? (100 / Number(p.supply)).toFixed(2) : '0'
   return (
-    <div className="relative w-72 rounded-2xl bg-white shadow-[0_24px_60px_-20px_rgba(29,42,60,.45)]">
+    <div className="relative w-72 rounded-2xl bg-white text-foreground shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)]">
       <div className="p-5 pb-4">
         <p className="text-xs font-semibold text-brick">1 unit of</p>
         <p className="mt-0.5 truncate font-serif text-xl font-semibold">{p.name}</p>
         <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground"><MapPin className="size-3.5" />{p.location || 'India'}</p>
       </div>
       <div className="relative border-t border-dashed">
-        <span className="absolute -top-3 -left-3 size-6 rounded-full bg-[#1d2a3c]/0 shadow-[inset_0_0_0_100px_var(--background)]" />
-        <span className="absolute -top-3 -right-3 size-6 rounded-full shadow-[inset_0_0_0_100px_var(--background)]" />
+        <span className="absolute -top-3 -left-3 size-6 rounded-full bg-[#1d2a3c]" />
+        <span className="absolute -top-3 -right-3 size-6 rounded-full bg-[#1d2a3c]" />
       </div>
       <dl className="grid grid-cols-2 gap-y-3 p-5 pt-4 text-sm">
         <div><dt className="text-muted-foreground">You pay</dt><dd className="text-lg font-bold">{p.minPrice !== null ? rupee(p.minPrice) : '—'}</dd></div>
@@ -73,32 +73,32 @@ export default function Home() {
   return (
     <>
       {/* hero */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -top-40 -right-40 size-[620px] rounded-full bg-[radial-gradient(circle,#f1d9c9_0%,transparent_65%)]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-12 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pt-20 lg:pb-24">
+      <section className="navy-glow relative overflow-hidden">
+        <div className="pointer-events-none absolute top-1/3 -right-40 size-[640px] rounded-full bg-[radial-gradient(circle,rgba(184,100,60,.35)_0%,transparent_65%)]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pt-20 lg:pb-24">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-brick-soft px-3 py-1 text-sm font-semibold text-brick">
-              <span className="size-1.5 rounded-full bg-brick" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-[#f0b08c]">
+              <span className="size-1.5 rounded-full bg-[#f0b08c]" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
             </p>
             <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">Real estate for every Indian.</h1>
-            <p className="mt-6 max-w-lg text-lg text-muted-foreground">
+            <p className="mt-6 max-w-lg text-lg text-white/70">
               Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
             </p>
-            <form onSubmit={goList} className="mt-8 flex max-w-xl items-center rounded-full border bg-white p-2 pl-6 shadow-[0_10px_30px_-12px_rgba(29,42,60,.3)]">
+            <form onSubmit={goList} className="mt-8 flex max-w-xl items-center rounded-full bg-white p-2 pl-6 text-foreground shadow-[0_18px_40px_-12px_rgba(0,0,0,.45)]">
               <div className="min-w-0 flex-1">
                 <label htmlFor="q" className="block text-xs font-semibold">Where</label>
                 <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="City, area or building"
                   className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
               </div>
-              <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-primary px-5 font-semibold text-white hover:bg-forest-deep"><Search className="size-4.5" />Search</button>
+              <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-[#d5865b] to-[#bc6840] px-5 font-semibold text-white hover:brightness-105"><Search className="size-4.5" />Search</button>
             </form>
           </div>
 
           <div className="relative mx-auto w-full max-w-lg lg:mr-0">
-            {!items ? <Skeleton className="aspect-[4/5] rounded-[2rem]" /> : (
+            {!items ? <Skeleton className="aspect-[4/5] rounded-[2rem] bg-white/10" /> : (
               <>
                 <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
-                  <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/5] overflow-hidden rounded-[2rem] bg-moss">
+                  <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/5] overflow-hidden rounded-[2rem] bg-white/10 ring-1 ring-white/10">
                     <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
                   </Link>
                 </motion.div>
@@ -116,7 +116,7 @@ export default function Home() {
 
       {/* live numbers */}
       <section className="bg-primary text-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 px-4 py-10 sm:px-6 md:grid-cols-4">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 border-t border-white/10 px-4 py-10 sm:px-6 md:grid-cols-4">
           {[
             [totals.count, 'buildings listed'],
             [totals.forSale.toString(), 'units for sale now'],

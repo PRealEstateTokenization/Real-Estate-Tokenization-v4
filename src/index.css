@@ -89,6 +89,13 @@
   input[type=number] { -moz-appearance: textfield; }
 }
 
+/* navy panel with a soft copper glow */
+.navy-glow {
+  background-color: #1d2a3c;
+  background-image: radial-gradient(ellipse 55% 60% at 50% 0%, rgba(184,100,60,.38), transparent 70%);
+  color: #fff;
+}
+
 /* copper buttons, as on the original site */
 .bg-brick.text-white { background-image: linear-gradient(180deg, #d5865b, #bc6840); }
 

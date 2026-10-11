@@ -11,7 +11,7 @@ import { placeholderImg } from '@/lib/placeholder'
 import { pct, rupee, rupeeShort } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)']
+const COLORS = ['#f0b08c', '#ffffff', '#9aa1ab', '#d9a441', '#7fb3c4']
 
 export default function Portfolio() {
   const { session, version } = useWallet()
@@ -43,15 +43,15 @@ export default function Portfolio() {
     <div className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
       <h1 className="text-3xl font-bold">Portfolio</h1>
 
-      <section className="mt-6 rounded-2xl border p-6 sm:p-7">
+      <section className="navy-glow mt-6 rounded-3xl p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="text-sm text-muted-foreground">Current value</p>
-            {data ? <p className="mt-1 text-4xl font-extrabold tracking-tight">{rupee(value)}</p> : <Skeleton className="mt-2 h-10 w-52" />}
+            <p className="text-sm text-white/60">Current value</p>
+            {data ? <p className="mt-1 text-4xl font-extrabold tracking-tight">{rupee(value)}</p> : <Skeleton className="mt-2 h-10 w-52 bg-white/10" />}
           </div>
           <div className="flex gap-10">
-            <div><p className="text-sm text-muted-foreground">Rent to claim</p><p className={cn('mt-1 text-xl font-bold', pending > 0n && 'text-positive')}>{data ? rupee(pending) : '–'}</p></div>
-            <div><p className="text-sm text-muted-foreground">Units held</p><p className="mt-1 text-xl font-bold">{data ? units.toString() : '–'}</p></div>
+            <div><p className="text-sm text-white/60">Rent to claim</p><p className={cn('mt-1 text-xl font-bold', pending > 0n && 'text-[#8fd4ad]')}>{data ? rupee(pending) : '–'}</p></div>
+            <div><p className="text-sm text-white/60">Units held</p><p className="mt-1 text-xl font-bold">{data ? units.toString() : '–'}</p></div>
           </div>
         </div>
         {h.length > 0 && (
@@ -59,12 +59,12 @@ export default function Portfolio() {
             <div className="flex h-2 gap-0.5 overflow-hidden rounded-full">
               {h.map((x, i) => <span key={x.address} style={{ flex: Number(x.balance), background: COLORS[i % COLORS.length] }} />)}
             </div>
-            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
+            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-white/60">
               {h.map((x, i) => <span key={x.address} className="flex items-center gap-1.5"><span className="size-2 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />{x.name} {pct(x.balance, units, 0)}</span>)}
             </div>
           </div>
         )}
-        <p className="mt-5 text-xs text-muted-foreground">Value uses the lowest price each property is offered at today.</p>
+        <p className="mt-5 text-xs text-white/45">Value uses the lowest price each property is offered at today.</p>
       </section>
 
       {err && <p className="mt-6 rounded-xl bg-destructive/10 p-4 text-destructive">Could not load your portfolio: {err}</p>}
