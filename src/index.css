@@ -3,35 +3,35 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Parcel.io tokens: limestone page, white surfaces, forest-green actions, brick accent */
+/* Parcel.io tokens: original cream palette (warm cream, green-black, warm tan accent) */
 :root {
   --radius: 0.75rem;
-  --background: #f4f5f2;
-  --foreground: #14231f;
+  --background: #fbf9f5;
+  --foreground: #1a2e29;
   --card: #ffffff;
-  --card-foreground: #14231f;
+  --card-foreground: #1a2e29;
   --popover: #ffffff;
-  --popover-foreground: #14231f;
-  --primary: #1e4a3d;
+  --popover-foreground: #1a2e29;
+  --primary: #1a2e29;
   --primary-foreground: #ffffff;
-  --secondary: #eef4f0;
-  --secondary-foreground: #14231f;
-  --muted: #eef0ec;
-  --muted-foreground: #66726d;
-  --accent: #eef4f0;
-  --accent-foreground: #14231f;
+  --secondary: #f4efe7;
+  --secondary-foreground: #1a2e29;
+  --muted: #f4efe7;
+  --muted-foreground: #8a8578;
+  --accent: #f4efe7;
+  --accent-foreground: #1a2e29;
   --destructive: #b3261e;
-  --border: #e3e6e1;
-  --input: #d2d7d1;
-  --ring: #1e4a3d;
-  --brick: #b5562f;
-  --brick-soft: #f6e7df;
-  --moss: #dde8e1;
-  --forest-deep: #163a30;
-  --positive: #1e7a4f;
-  --chart-1: #1e4a3d;
-  --chart-2: #b5562f;
-  --chart-3: #8c9a94;
+  --border: #e4dccf;
+  --input: #ded5c6;
+  --ring: #c7aa7e;
+  --brick: #b8874e;
+  --brick-soft: #f4e9d8;
+  --moss: #efe6d8;
+  --forest-deep: #1a2e29;
+  --positive: #3f7a5c;
+  --chart-1: #1a2e29;
+  --chart-2: #b8874e;
+  --chart-3: #5c7267;
   --chart-4: #d9a441;
   --chart-5: #5b8a9a;
 }
