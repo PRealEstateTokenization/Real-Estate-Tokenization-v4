@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { ArrowRight, Building, Building2, Check, House, LayoutGrid, MapPin, Search, Store, Warehouse, X } from 'lucide-react'
+import { ArrowRight, Building, Building2, Check, House, LayoutGrid, Search, Store, Warehouse, X } from 'lucide-react'
+import { Area, AreaChart, ResponsiveContainer } from 'recharts'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import PropertyCard, { PropertyCardSkeleton } from '@/components/PropertyCard'
@@ -16,26 +16,50 @@ import { cn } from '@/lib/utils'
 const ICONS = { 'Commercial office': Building2, Retail: Store, Warehousing: Warehouse, Residential: House, 'Mixed use': Building }
 const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 
-function UnitTicket({ p }) {
-  const share = p.supply > 0n ? (100 / Number(p.supply)).toFixed(2) : '0'
+function SamplePortfolio({ items }) {
+  // a modest example holding: cheaper buildings first, about ₹5 lakh in each
+  const picks = items.filter((p) => p.minPrice !== null).sort((a, b) => (a.minPrice < b.minPrice ? -1 : 1)).slice(0, 3)
+  const rows = picks.map((p) => {
+    const u = BigInt(Math.min(25, Math.max(1, Math.round(500000 / Number(p.minPrice)))))
+    return { p, units: u, value: u * p.minPrice, rent: p.supply > 0n ? (u * p.rentPaid) / p.supply : 0n }
+  })
+  const value = rows.reduce((a, r) => a + r.value, 0n)
+  const rent = rows.reduce((a, r) => a + r.rent, 0n)
+  const series = useMemo(() => { let v = 100; return Array.from({ length: 24 }, (_, i) => ({ i, v: (v += Math.sin(i * 1.3) * 2.6 + 1.6) })) }, [])
   return (
-    <div className="relative w-72 rounded-2xl bg-white text-foreground shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)]">
-      <div className="p-5 pb-4">
-        <p className="text-xs font-semibold text-brick">1 unit of</p>
-        <p className="mt-0.5 truncate font-serif text-xl font-semibold">{p.name}</p>
-        <p className="mt-0.5 flex items-center gap-1 truncate text-sm text-muted-foreground"><MapPin className="size-3.5" />{p.location || 'Location to be added'}</p>
-      </div>
-      <div className="relative border-t border-dashed">
-        <span className="absolute -top-3 -left-3 size-6 rounded-full bg-[#1d2a3c]" />
-        <span className="absolute -top-3 -right-3 size-6 rounded-full bg-[#1d2a3c]" />
-      </div>
-      <dl className="grid grid-cols-2 gap-y-3 p-5 pt-4 text-sm">
-        <div><dt className="text-muted-foreground">You pay</dt><dd className="text-lg font-bold">{p.minPrice !== null ? rupee(p.minPrice) : '—'}</dd></div>
-        <div><dt className="text-muted-foreground">You earn</dt><dd className="text-lg font-bold">{share}% <span className="text-sm font-medium text-muted-foreground">of rent</span></dd></div>
-        <div className="col-span-2 flex items-center justify-between rounded-lg bg-muted px-3 py-2 text-xs">
-          <span className="text-muted-foreground">Rent paid to holders so far</span><b className="text-positive">{rupeeShort(p.rentPaid)}</b>
+    <div className="relative">
+      <div className="rounded-[1.75rem] border bg-white p-6 shadow-[0_30px_70px_-30px_rgba(29,42,60,.35)] sm:p-7">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-muted-foreground">Your portfolio</p>
+          <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">Sample</span>
         </div>
-      </dl>
+        <p className="mt-2 font-serif text-4xl font-semibold tracking-tight">{rupee(value)}</p>
+        <p className="mt-1 text-sm font-semibold text-positive">+{rupee(rent)} rent ready to claim</p>
+        <div className="mt-4 h-24">
+          <ResponsiveContainer>
+            <AreaChart data={series} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#b8643c" stopOpacity={0.28} /><stop offset="1" stopColor="#b8643c" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area type="monotone" dataKey="v" stroke="#b8643c" strokeWidth={2.2} fill="url(#spark)" isAnimationActive={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <ul className="mt-4 divide-y">
+          {rows.map(({ p, units: u, value: v }) => (
+            <li key={p.address}>
+              <Link to={`/properties/${p.address}`} className="flex items-center gap-3 py-3 hover:opacity-80">
+                <img src={p.image || placeholderImg(p.address)} alt="" className="size-11 rounded-xl bg-moss object-cover" />
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{p.name}</p><p className="text-xs text-muted-foreground">{u.toString()} units</p></div>
+                <p className="text-sm font-semibold">{rupeeShort(v)}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-3 flex h-11 items-center justify-center rounded-xl bg-gradient-to-b from-[#d5865b] to-[#bc6840] text-sm font-semibold text-white">Claim {rupee(rent)}</div>
+      </div>
     </div>
   )
 }
@@ -51,7 +75,6 @@ export default function Home() {
   useEffect(() => { loadCatalog().then((c) => setItems(c.items)).catch((e) => setErr(prettyErr(e))) }, [version])
 
   const all = items || []
-  const hero = all.find((p) => p.image && p.rentPaid > 0n) || all.find((p) => p.image) || all[0]
   const totals = {
     count: all.length,
     forSale: all.reduce((a, p) => a + p.forSale, 0n),
@@ -67,82 +90,73 @@ export default function Home() {
     return list
   }, [items, q, type, sort])
 
-  const goList = (e) => { e?.preventDefault(); document.getElementById('listings')?.scrollIntoView({ behavior: 'smooth' }) }
+  const goList = (e) => { e?.preventDefault?.(); document.getElementById('listings')?.scrollIntoView({ behavior: 'smooth' }) }
   const cats = [['All', LayoutGrid], ...PROPERTY_TYPES.map((t) => [t, ICONS[t] || Building])]
 
   return (
     <>
-      {/* hero: one rounded navy panel, like the closing banners */}
-      <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
-        <div className="relative rounded-[2rem] bg-primary text-white">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]">
-            <div className="absolute -top-40 left-1/2 size-[640px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(184,100,60,.32)_0%,transparent_65%)]" />
+      {/* hero */}
+      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 pt-14 pb-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:pt-20 lg:pb-20">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-brick-soft px-3 py-1 text-sm font-semibold text-brick">
+            <span className="size-1.5 rounded-full bg-brick" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
+          </p>
+          <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl xl:text-7xl">Real estate for every Indian.</h1>
+          <p className="mt-6 max-w-lg text-lg text-muted-foreground">
+            Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button size="lg" onClick={goList}>Explore properties <ArrowRight /></Button>
+            <Button size="lg" variant="outline" asChild><Link to="/list">List your property</Link></Button>
           </div>
-          <div className="relative grid items-center gap-14 px-6 pt-12 pb-14 sm:px-12 lg:grid-cols-2 lg:gap-16 lg:py-16">
-            <div className="text-center lg:text-left">
-              <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-[#f0b08c]">
-                <span className="size-1.5 rounded-full bg-[#f0b08c]" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
-              </p>
-              <h1 className="mt-6 text-5xl leading-[1.02] sm:text-6xl xl:text-7xl">Real estate for every Indian.</h1>
-              <p className="mx-auto mt-6 max-w-lg text-lg text-white/70 lg:mx-0">
-                Own units in rent-earning offices, shops and warehouses. Collect your share of the rent, and sell your units whenever you like.
-              </p>
-              <form onSubmit={goList} className="mx-auto mt-8 flex max-w-lg items-center rounded-full bg-white p-2 pl-6 text-left text-foreground shadow-[0_18px_40px_-12px_rgba(0,0,0,.45)] lg:mx-0">
-                <div className="min-w-0 flex-1">
-                  <label htmlFor="q" className="block text-xs font-semibold">Where</label>
-                  <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="City, area or building"
-                    className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
-                </div>
-                <button type="submit" className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-[#d5865b] to-[#bc6840] px-5 font-semibold text-white hover:brightness-105"><Search className="size-4.5" />Search</button>
-              </form>
-            </div>
-
-            <div className="relative mx-auto w-full max-w-md pb-6">
-              {!items ? <Skeleton className="aspect-[5/6] rounded-3xl bg-white/10" /> : (
-                <>
-                  <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
-                    <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[5/6] overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/10">
-                      <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
-                    </Link>
-                  </motion.div>
-                  {hero && (
-                    <motion.div initial={{ opacity: 0, y: 24, rotate: -4 }} animate={{ opacity: 1, y: 0, rotate: -3 }} transition={{ delay: 0.35, duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
-                      className="absolute bottom-0 -left-3 sm:-left-14">
-                      <UnitTicket p={hero} />
-                    </motion.div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="relative grid grid-cols-2 gap-y-6 border-t border-white/10 px-6 py-8 sm:px-12 md:grid-cols-4">
-            {[
-              [totals.count, 'buildings listed'],
-              [totals.forSale.toString(), 'units for sale now'],
-              [rupeeShort(totals.rent), 'rent paid to holders'],
-              [totals.min !== null ? rupeeShort(totals.min) : '—', 'smallest ticket today'],
-            ].map(([v, k]) => (
-              <div key={k} className="text-center md:text-left">
-                <p className="font-serif text-3xl font-semibold sm:text-4xl">{items ? v : '–'}</p>
-                <p className="mt-1 text-sm text-white/60">{k}</p>
-              </div>
+          <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t pt-6">
+            {[[totals.count, 'buildings listed'], [totals.forSale.toString(), 'units for sale'], [rupeeShort(totals.rent), 'rent paid out']].map(([v, k]) => (
+              <div key={k}><dt className="sr-only">{k}</dt><dd className="font-serif text-3xl font-semibold">{items ? v : '–'}</dd><p className="text-sm text-muted-foreground">{k}</p></div>
             ))}
-          </div>
+          </dl>
+        </div>
+        <div className="mx-auto w-full max-w-md lg:mr-0">
+          {items ? <SamplePortfolio items={all} /> : <Skeleton className="h-[460px] rounded-[1.75rem]" />}
         </div>
       </section>
 
+      {/* how it works */}
+      <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
+        <h2 className="text-4xl">How it works</h2>
+        <ol className="relative mt-10 grid gap-10 md:grid-cols-3">
+          <span className="absolute top-5 right-[16%] left-[4%] hidden h-px bg-brick/40 md:block" />
+          {[
+            ['Choose a building', 'Look through photos, documents, the location and its performance against NIFTY and SENSEX.'],
+            ['Buy units', 'Pick how many units you want and pay the seller in rupees. The units land in your own wallet.'],
+            ['Earn the rent', 'Rent is split across all units. Claim your share from your portfolio and sell whenever you like.'],
+          ].map(([t, d], i) => (
+            <li key={t} className="relative">
+              <span className="relative grid size-10 place-items-center rounded-full bg-brick font-serif text-lg font-semibold text-white ring-8 ring-background">{i + 1}</span>
+              <p className="mt-5 text-xl font-bold">{t}</p>
+              <p className="mt-2 max-w-sm text-muted-foreground">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       {/* listings */}
-      <section id="listings" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 sm:px-6">
+      <section id="listings" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-24 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-4xl">Open for investment</h2>
             <p className="mt-2 text-muted-foreground">Every listing shows photos, documents, the location and how it has performed.</p>
           </div>
+          <div className="flex flex-wrap gap-2">
+          <div className="relative">
+            <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search city, area or building" aria-label="Search properties"
+              className="h-10 w-64 rounded-full border bg-white pr-4 pl-10 text-sm outline-none focus:border-brick" />
+          </div>
           <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort"
             className="rounded-full border bg-white px-4 py-2 text-sm font-medium outline-none">
             <option value="new">Newest first</option><option value="price">Lowest price</option><option value="avail">Most units for sale</option>
           </select>
+          </div>
         </div>
         <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
           {cats.map(([t, Icon]) => (
@@ -186,25 +200,6 @@ export default function Home() {
             </ul>
           </div>
         </div>
-      </section>
-
-      {/* how it works */}
-      <section className="mx-auto max-w-7xl px-4 pt-24 sm:px-6">
-        <h2 className="text-4xl">How it works</h2>
-        <ol className="relative mt-10 grid gap-10 md:grid-cols-3">
-          <span className="absolute top-5 right-[16%] left-[4%] hidden h-px bg-brick/40 md:block" />
-          {[
-            ['Choose a building', 'Look through photos, documents, the location and its performance against NIFTY and SENSEX.'],
-            ['Buy units', 'Pick how many units you want and pay the seller in rupees. The units land in your own wallet.'],
-            ['Earn the rent', 'Rent is split across all units. Claim your share from your portfolio and sell whenever you like.'],
-          ].map(([t, d], i) => (
-            <li key={t} className="relative">
-              <span className="relative grid size-10 place-items-center rounded-full bg-brick font-serif text-lg font-semibold text-white ring-8 ring-background">{i + 1}</span>
-              <p className="mt-5 text-xl font-bold">{t}</p>
-              <p className="mt-2 max-w-sm text-muted-foreground">{d}</p>
-            </li>
-          ))}
-        </ol>
       </section>
 
       {/* owners */}
