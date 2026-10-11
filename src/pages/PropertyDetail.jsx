@@ -99,7 +99,7 @@ export default function PropertyDetail() {
 
       <PhotoMosaic images={imgs} name={p.name} isPlaceholder={!m.image_urls?.length} />
 
-      <nav className="sticky top-16 z-20 -mx-4 mt-6 hidden gap-7 border-b bg-white px-4 sm:-mx-6 sm:px-6 md:flex">
+      <nav className="sticky top-16 z-20 -mx-4 mt-6 hidden gap-7 border-b bg-background px-4 sm:-mx-6 sm:px-6 md:flex">
         {SECTIONS.filter(([id]) => id !== 'location' || m.location).map(([id, label]) => (
           <a key={id} href={`#${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }) }}
             className="border-b-2 border-transparent py-4 text-sm font-semibold text-muted-foreground hover:border-foreground hover:text-foreground">{label}</a>
@@ -162,7 +162,7 @@ export default function PropertyDetail() {
       )}
 
       {p.buyable.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t bg-white px-5 py-3 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t bg-background px-5 py-3 lg:hidden">
           <div><p className="font-bold">{rupee(p.minPrice)} <span className="text-sm font-normal text-muted-foreground">per unit</span></p><p className="text-xs text-muted-foreground">{p.forSale.toString()} units for sale</p></div>
           <Button size="lg" onClick={() => buyFrom(p.buyable[0].id)}>Buy units</Button>
         </div>

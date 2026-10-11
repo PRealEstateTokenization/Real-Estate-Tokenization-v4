@@ -3,10 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Parcel.io tokens — forest green actions, brick accent, cool neutrals */
+/* Parcel.io tokens: limestone page, white surfaces, forest-green actions, brick accent */
 :root {
   --radius: 0.75rem;
-  --background: #ffffff;
+  --background: #f4f5f2;
   --foreground: #14231f;
   --card: #ffffff;
   --card-foreground: #14231f;
@@ -16,7 +16,7 @@
   --primary-foreground: #ffffff;
   --secondary: #eef4f0;
   --secondary-foreground: #14231f;
-  --muted: #f4f5f2;
+  --muted: #eef0ec;
   --muted-foreground: #66726d;
   --accent: #eef4f0;
   --accent-foreground: #14231f;
@@ -27,7 +27,7 @@
   --brick: #b5562f;
   --brick-soft: #f6e7df;
   --moss: #dde8e1;
-  --forest-deep: #12302a;
+  --forest-deep: #163a30;
   --positive: #1e7a4f;
   --chart-1: #1e4a3d;
   --chart-2: #b5562f;

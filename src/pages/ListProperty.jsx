@@ -147,7 +147,7 @@ export default function ListProperty() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-white">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-background">
         <div className="flex h-1.5 gap-1">
           {STEPS.map((_, i) => <span key={i} className={cn('flex-1 transition-colors', i <= step ? 'bg-foreground' : 'bg-muted')} />)}
         </div>

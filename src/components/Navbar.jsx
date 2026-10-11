@@ -53,7 +53,7 @@ function AccountMenu() {
 export default function Navbar() {
   const { session, connect } = useWallet()
   return (
-    <header className="sticky top-0 z-40 border-b bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
           <Logo /><span>Parcel<span className="text-brick">.io</span></span>
@@ -81,7 +81,7 @@ export function MobileTabs() {
   if (pathname.startsWith('/properties/') || pathname.startsWith('/list')) return null
   const items = [...tabs, { to: '/list', label: 'List', icon: Plus }]
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
       {items.map(({ to, label, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end}
           className={({ isActive }) => cn('flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold', isActive ? 'text-primary' : 'text-muted-foreground')}>
