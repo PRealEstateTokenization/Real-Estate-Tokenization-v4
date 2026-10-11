@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Logo from '@/components/Logo'
 
 export default function Footer() {
@@ -8,6 +9,7 @@ export default function Footer() {
           <Logo className="size-6" />
           <span className="font-bold">Parcel<span className="text-brick">.io</span></span>
           <span className="text-muted-foreground">Real estate for every Indian.</span>
+          <Link to="/about" className="ml-3 font-semibold text-foreground underline underline-offset-4">About us</Link>
         </div>
         <p className="max-w-xl">
           Working prototype on the Ethereum Sepolia test network. Payments and rent are settled in rupees, off-chain.

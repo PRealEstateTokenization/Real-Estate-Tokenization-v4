@@ -9,6 +9,7 @@ import Home from '@/pages/Home'
 import PropertyDetail from '@/pages/PropertyDetail'
 import ListProperty from '@/pages/ListProperty'
 import Portfolio from '@/pages/Portfolio'
+import About from '@/pages/About'
 import { AlertTriangle } from 'lucide-react'
 
 function ScrollToTop() {
@@ -42,6 +43,7 @@ function Shell() {
             <Route path="/list" element={<ListProperty />} />
             <Route path="/list-property" element={<Navigate to="/list" replace />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/about" element={<About />} />
             <Route path="/dashboard" element={<Navigate to="/portfolio" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

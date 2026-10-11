@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Briefcase, ChevronDown, Compass, LogOut, Plus, Wallet } from 'lucide-react'
+import { Briefcase, ChevronDown, Compass, Info, LogOut, Plus, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useWallet } from '@/context/WalletContext'
 import { initials, short } from '@/lib/format'
@@ -10,6 +10,7 @@ import Logo from '@/components/Logo'
 const tabs = [
   { to: '/', label: 'Explore', icon: Compass, end: true },
   { to: '/portfolio', label: 'Portfolio', icon: Briefcase },
+  { to: '/about', label: 'About', icon: Info },
 ]
 
 function AccountMenu() {
@@ -79,9 +80,9 @@ export default function Navbar() {
 export function MobileTabs() {
   const { pathname } = useLocation()
   if (pathname.startsWith('/properties/') || pathname.startsWith('/list')) return null
-  const items = [...tabs, { to: '/list', label: 'List', icon: Plus }]
+  const items = [...tabs.slice(0, 2), { to: '/list', label: 'List', icon: Plus }, tabs[2]]
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
       {items.map(({ to, label, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end}
           className={({ isActive }) => cn('flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold', isActive ? 'text-primary' : 'text-muted-foreground')}>
