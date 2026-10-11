@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <>
       {/* hero */}
-      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 pt-14 pb-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:pt-20 lg:pb-20">
+      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 pt-14 pb-16 sm:px-6 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:pt-20 lg:pb-20">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full bg-brick-soft px-3 py-1 text-sm font-semibold text-brick">
             <span className="size-1.5 rounded-full bg-brick" />Units from {totals.min !== null ? rupeeShort(totals.min) : 'a few lakh'}
@@ -92,11 +92,11 @@ export default function Home() {
             ))}
           </dl>
         </div>
-        <div className="relative mx-auto w-full max-w-md pb-10">
-          {!items ? <Skeleton className="aspect-[4/5] rounded-[2rem]" /> : (
+        <div className="relative mx-auto w-full max-w-xl pb-28">
+          {!items ? <Skeleton className="aspect-[4/3] rounded-[2rem]" /> : (
             <>
               <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}>
-                <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/5] overflow-hidden rounded-[2rem] bg-moss shadow-[0_40px_80px_-40px_rgba(29,42,60,.5)]">
+                <Link to={hero ? `/properties/${hero.address}` : '/'} className="block aspect-[4/3] overflow-hidden rounded-[2rem] bg-moss shadow-[0_40px_80px_-40px_rgba(29,42,60,.5)]">
                   <img src={hero?.image || placeholderImg(hero?.address || 'parcel')} alt={hero?.name || ''} className="size-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
                 </Link>
               </motion.div>
