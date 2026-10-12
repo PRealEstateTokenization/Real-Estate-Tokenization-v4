@@ -1,39 +1,40 @@
-# Parcel.io contracts
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
-Solidity contracts for Parcel.io, deployed to the **Sepolia test network only**.
+import {PropertyToken, IWhitelist} from "./PropertyToken.sol";
 
-| Contract | What it does |
-|---|---|
-| `Whitelist` | Self-service KYC list. Wallets call `register()` once. |
-| `PropertyTokenFactory` | `registerLand(...)` creates one `PropertyToken` per property. |
-| `PropertyToken` | The units of one property (whole units). Rent is shared by **units × time held**. |
-| `Marketplace` | Offers to sell units. Units stay in the seller's wallet (and keep earning) until bought. |
+contract PropertyTokenFactory {
+    IWhitelist public immutable whitelist;
+    address[] private _all;
+    mapping(address => address[]) private _byOwner;
 
-## Setup (once)
-```
-cd blockchain
-npm install
-cp .env.example .env      # then fill in SEPOLIA_RPC_URL and PRIVATE_KEY
-```
+    event LandRegistered(address indexed owner, address indexed tokenAddress, bytes32 docHash, uint256 totalTokens);
 
-## Test
-```
-npm test
-```
+    constructor(address whitelist_) {
+        whitelist = IWhitelist(whitelist_);
+    }
 
-## Deploy
-```
-npm run deploy
-```
-This deploys to Sepolia and rewrites `../public/addresses.json` and `../public/abis.json`,
-so the website points at the new contracts. Then from the repo root:
-```
-git add public blockchain
-git commit -m "Deploy contracts"
-git push
-```
-Properties registered on older contracts don't carry over; register them again on the site.
+    function registerLand(
+        string calldata name_,
+        string calldata symbol_,
+        uint256 totalTokens,
+        bytes32 docHash,
+        string calldata metadataURI
+    ) external returns (address tokenAddress) {
+        require(whitelist.isApproved(msg.sender), "Caller not KYC-approved");
+        require(totalTokens > 0, "Token count must be > 0");
+        PropertyToken t = new PropertyToken(name_, symbol_, totalTokens, docHash, metadataURI, address(whitelist), msg.sender);
+        tokenAddress = address(t);
+        _all.push(tokenAddress);
+        _byOwner[msg.sender].push(tokenAddress);
+        emit LandRegistered(msg.sender, tokenAddress, docHash, totalTokens);
+    }
 
-## Safety
-- `.env` holds your private key. It is in `.gitignore`; check with `git ls-files | grep -i env` (must print nothing).
-- Use a testnet-only wallet. Never add mainnet to `hardhat.config.js`.
+    function getAllTokens() external view returns (address[] memory) {
+        return _all;
+    }
+
+    function getTokensByOwner(address owner) external view returns (address[] memory) {
+        return _byOwner[owner];
+    }
+}
